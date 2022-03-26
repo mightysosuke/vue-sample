@@ -49,4 +49,9 @@ code {
   border-radius: 4px;
   color: #304455;
 }
+
+.title {
+  color: #42b983;
+  font-size: 18px;
+}
 </style>
