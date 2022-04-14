@@ -1,8 +1,15 @@
 <script setup lang="ts">
-const itemName1 = 'desk'
+import { ref, reactive, computed, watch, toRefs } from 'vue'
+
+// const itemName1 = ref<string>('desk')
 const itemName2 = 'bike'
 
-const price1 = 40000
+const item1 = reactive({
+  name: 'desk',
+  price: 40000
+})
+
+// const price1 = 40000
 const price2 = 20000
 
 const url1 = 'https://www.amazon.co.jp/dp/B08C1LR9RC'
@@ -13,19 +20,55 @@ const buy = (itemName: string) => {
 }
 
 const input = (event: any) => {
-  console.log('event: ', event.target.value)
+  item1.name = event.target.value
 }
+
+const inputPrice = (event: any) => {
+  item1.price = event.target.value
+}
+
+const clear = () => {
+  item1.name = ''
+  item1.price = 0
+}
+
+const budget = 50000
+
+// const priceLabel = computed(() => {
+//   if (item1.price > budget * 2) {
+//     return 'tooooooo expensive...'
+//   } else if (item1.price > budget){
+//     return 'expensive...'
+//   } else {
+//     return item1.price + 'yen'
+//   }
+// })
+
+const priceLabel = ref<string>(item1.price + 'yen')
+const { price } = toRefs(item1)
+watch(price, () => {
+  if (price.value > budget * 2) {
+    priceLabel.value = 'tooooooo expensive...'
+  } else if (price.value > budget){
+    priceLabel.value = 'expensive...'
+  } else {
+    priceLabel.value = price.value + 'yen'
+  }
+})
+
 </script>
 
 <template>
   <div class="container">
     <h1>Payment</h1>
-    <input v-on:input="input" />
+    <input v-model="item1.name" />
+    <input v-model="item1.price" />
+    <button v-on:click="clear">Clear</button>
     <div class="payment">
-      <label>{{ itemName1 }}</label>
-      <label>{{ price1 }} 円</label>
+      <label>{{ item1.name }}</label>
+      <label>{{ priceLabel }}</label>
       <a v-bind:href="url1">bought at...</a>
-      <button v-on:click="buy(itemName1)">BUY</button>
+      <button v-on:click="buy(item1.name)">BUY</button>
     </div>
     <div class="payment">
       <label>{{ itemName2 }}</label>
@@ -41,6 +84,10 @@ const input = (event: any) => {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+input {
+  margin-bottom: 8px;
 }
 
 .payment {
